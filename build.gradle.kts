@@ -30,6 +30,7 @@ dependencies {
     implementation("info.picocli:picocli:3.8.2")
     implementation("org.zeroturnaround:zt-exec:1.10")
     implementation("org.slf4j:slf4j-nop:1.7.21")
+    implementation("org.eclipse.jgit:org.eclipse.jgit:4.7.0.201704051617-r")
 
     testCompile("org.junit.jupiter:junit-jupiter-api:5.3.2")
     testCompile("org.junit.jupiter:junit-jupiter-params:5.3.2")
