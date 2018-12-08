@@ -34,15 +34,19 @@ class ReportCommand : Runnable {
     override fun run() {
         val commits = provider.provide()
 
-        var message = ""
-        commits.forEach { commit ->
-            // ignore commits with empty body
-            if (commit.body.isBlank()) return
-
+        val messages = mutableListOf<String>()
+        commits.filter { commit ->
+            commit.body.isNotBlank() // ignore commits with empty body
+        }.forEach { commit ->
             val prefix = findPrefix(commit)
-            message += "$prefix ${commit.body}\n"
+
+            val bodies = commit.body.split("\n")
+            bodies.forEach { body ->
+                messages.add("$prefix $body")
+            }
         }
 
+        val message = messages.joinToString("\n")
         clipboard(message)
         println(message)
     }

@@ -4,7 +4,6 @@ import ISO8601
 import Provider
 
 /**
- * Return list of commit, sorted by date
  * @since 2018
  * @author Anton Vlasov - whalemare
  */
@@ -13,7 +12,7 @@ class CommitProvider(
 ) : Provider<List<Commit>> {
 
     /**
-     * @return list of commit, sorted by date
+     * @return список коммитов отсортированных по дате их создания (от первого к последнему)
      */
     override fun provide(): List<Commit> {
         val rawText = rawProvider.provide()
@@ -58,11 +57,53 @@ class CommitProvider(
     }
 
     private fun startBody(lines: List<String>): Triple<String, String, String> {
-        val parts = lines.filter { it.isNotBlank() }
+        val HEADER = 0
+        val HEADER_BODY = 1
+        val HEADER_BODY_FOOTER = 2
+
+        val countWhitespaces = lines.count { it.isBlank() }
+
+        var header = ""
+        var body = ""
+        var footer = ""
+        when (countWhitespaces) {
+            HEADER -> {
+                header = extractHeader(lines)
+            }
+            HEADER_BODY -> {
+                header = extractHeader(lines)
+                body = extractBody(lines)
+            }
+            HEADER_BODY_FOOTER -> {
+                header = extractHeader(lines)
+                body = extractBody(lines)
+
+                val indexFooter = lines.indexOfLast { it.isBlank() }
+                footer = lines.subList(indexFooter, lines.size).joinToString("\n") { it.trim() }
+            }
+        }
         return Triple(
-            (parts.elementAtOrNull(0) ?: "").trim(),
-            (parts.elementAtOrNull(1) ?: "").trim(),
-            (parts.elementAtOrNull(2) ?: "").trim()
+            header,
+            body,
+            footer
         )
+    }
+
+    private fun extractHeader(lines: List<String>): String {
+        return lines.first().trim()
+    }
+
+    private fun extractBody(lines: List<String>): String {
+        val indexBody = lines.indexOfFirst { it.isBlank() }
+        val indexLastWhitespace = lines.indexOfLast { it.isBlank() }
+        val indexEnd = if (indexBody == indexLastWhitespace) {
+            lines.size
+        } else {
+            indexLastWhitespace
+        }
+        return lines.subList(indexBody, indexEnd)
+            .filter { it.isNotBlank() }
+            .map { it.trim() }
+            .joinToString(separator = "\n")
     }
 }
