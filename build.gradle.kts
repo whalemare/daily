@@ -1,4 +1,8 @@
+import com.github.rholder.gradle.task.OneJar
+import org.gradle.internal.impldep.org.apache.tools.zip.JarMarker
+import org.gradle.jvm.tasks.Jar
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import sun.tools.jar.resources.jar
 
 buildscript {
     var kotlinVersion: String by extra
@@ -9,6 +13,7 @@ buildscript {
     }
     dependencies {
         classpath(kotlinModule("gradle-plugin", kotlinVersion))
+        classpath("com.github.rholder:gradle-one-jar:1.0.4")
     }
 }
 
@@ -17,6 +22,7 @@ version = "1.0-SNAPSHOT"
 
 apply {
     plugin("kotlin")
+    plugin("gradle-one-jar")
 }
 
 val kotlinVersion: String by extra
@@ -50,3 +56,27 @@ tasks.withType<Wrapper> {
 tasks.withType<KotlinCompile> {
     kotlinOptions.jvmTarget = "1.8"
 }
+
+tasks.withType<Jar> {
+    baseName = "ash"
+    manifest {
+        attributes(mapOf("Main-Class" to "Main"))
+    }
+}
+
+tasks.withType<OneJar> {
+    mainClass = "Main"
+    archiveName = "ash.jar"
+}
+
+//jar {
+//    baseName = "mira"
+//    manifest {
+//        attributes 'Main-Class': 'Main'
+//    }
+//}
+//
+//task makeJar(type: OneJar) {
+//    mainClass = 'Main'
+//    archiveName = 'mira.jar'
+//}
