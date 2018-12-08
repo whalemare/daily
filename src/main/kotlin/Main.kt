@@ -6,7 +6,7 @@ import picocli.CommandLine
  */
 class Main : Runnable {
     override fun run() {
-        print("Hello from Main")
+
     }
 
     fun main(args: Array<String>) {
