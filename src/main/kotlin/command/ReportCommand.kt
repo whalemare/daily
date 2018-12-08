@@ -5,6 +5,7 @@ import commit.CommitProvider
 import commit.RawCommitProvider
 import ext.clipboard
 import picocli.CommandLine
+import java.text.SimpleDateFormat
 
 
 /**
@@ -48,6 +49,9 @@ class ReportCommand : Runnable {
 
         val message = messages.joinToString("\n")
         clipboard(message)
+
+        val today = SimpleDateFormat("dd.MM.YYYY").format(commits.first().date.timeInMillis)
+        println("Отчет за $today")
         println(message)
     }
 
