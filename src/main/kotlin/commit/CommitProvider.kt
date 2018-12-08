@@ -17,7 +17,9 @@ class CommitProvider(
         val commits = mutableListOf<Commit>()
 
         var index = 0
-        for (line in lines) {
+        while (index < lines.size) {
+            val line = lines[index]
+
             val prefixCommit = "commit "
             val prefixAuthor = "Author: "
             val prefixDate = "Date: "
@@ -33,10 +35,12 @@ class CommitProvider(
                 commits.last().date = calendar
             } else if (line.isEmpty()) {
                 val linesStart = lines.subList(index + 1, lines.size)
-                index = linesStart.indexOf("")
-                val linesBody = linesStart.subList(0, index)
+                val indexEnd = linesStart.indexOf("")
+                index += (indexEnd + 2)
+                val linesBody = linesStart.subList(0, indexEnd)
                 val body = startBody(linesBody)
                 commits.last().body = body
+                continue
             }
 
             index++
