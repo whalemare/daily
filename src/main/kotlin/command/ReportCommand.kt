@@ -6,6 +6,7 @@ import commit.RawCommitProvider
 import ext.clipboard
 import picocli.CommandLine
 import java.text.SimpleDateFormat
+import java.util.*
 
 
 /**
@@ -34,6 +35,10 @@ class ReportCommand : Runnable {
 
     override fun run() {
         val commits = provider.provide()
+        if (commits.isEmpty()) {
+            onEmptyCommits()
+            return
+        }
 
         val messages = mutableListOf<String>()
         commits.filter { commit ->
@@ -53,6 +58,12 @@ class ReportCommand : Runnable {
         val today = SimpleDateFormat("dd.MM.YYYY").format(commits.first().date.timeInMillis)
         println("Отчет за $today")
         println(message)
+    }
+
+    private fun onEmptyCommits() {
+        val today = SimpleDateFormat("dd.MM.YYYY").format(Date())
+        println("Дата: $today")
+        println("Невозможно создать отчет, если Вы еще не поработали :)")
     }
 
     private fun findPrefix(commit: Commit): String {

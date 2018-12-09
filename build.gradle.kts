@@ -1,8 +1,10 @@
-import com.github.rholder.gradle.task.OneJar
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.gradle.internal.impldep.org.apache.tools.zip.JarMarker
 import org.gradle.jvm.tasks.Jar
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import sun.tools.jar.resources.jar
+import org.apache.tools.ant.filters.*
+import org.gradle.internal.impldep.org.apache.tools.zip.ExtraFieldUtils.register
 
 buildscript {
     var kotlinVersion: String by extra
@@ -10,10 +12,11 @@ buildscript {
 
     repositories {
         mavenCentral()
+        maven { setUrl("https://repo.gradle.org/gradle/repo") }
     }
     dependencies {
         classpath(kotlinModule("gradle-plugin", kotlinVersion))
-        classpath("com.github.rholder:gradle-one-jar:1.0.4")
+        classpath("com.github.jengelman.gradle.plugins:shadow:4.0.3")
     }
 }
 
@@ -22,7 +25,7 @@ version = "1.0-SNAPSHOT"
 
 apply {
     plugin("kotlin")
-    plugin("gradle-one-jar")
+    plugin("com.github.johnrengelman.shadow")
 }
 
 val kotlinVersion: String by extra
@@ -43,40 +46,40 @@ dependencies {
     testRuntime("org.junit.jupiter:junit-jupiter-engine:5.3.2")
 }
 
-tasks.withType<Test> {
-    testLogging {
-        events("passed", "skipped", "failed")
+tasks {
+    withType<Test> {
+        testLogging {
+            events("passed", "skipped", "failed")
+        }
     }
-}
 
-tasks.withType<Wrapper> {
-    gradleVersion = "4.8"
-}
-
-tasks.withType<KotlinCompile> {
-    kotlinOptions.jvmTarget = "1.8"
-}
-
-tasks.withType<Jar> {
-    baseName = "ash"
-    manifest {
-        attributes(mapOf("Main-Class" to "Main"))
+    withType<Wrapper> {
+        gradleVersion = "4.8"
     }
-}
 
-tasks.withType<OneJar> {
-    mainClass = "Main"
-    archiveName = "ash.jar"
-}
+    withType<KotlinCompile> {
+        kotlinOptions.jvmTarget = "1.8"
+    }
 
-//jar {
-//    baseName = "mira"
-//    manifest {
-//        attributes 'Main-Class': 'Main'
+//    withType<Jar> {
+//        baseName = "ash"
+//        manifest {
+//            attributes(mapOf("Main-Class" to "Main"))
+//        }
 //    }
-//}
-//
-//task makeJar(type: OneJar) {
-//    mainClass = 'Main'
-//    archiveName = 'mira.jar'
-//}
+}
+
+val shadowJar: ShadowJar by tasks
+shadowJar.apply {
+    manifest {
+        this.attributes.apply {
+            put("Implementation-Title", "Gradle Jar File Example")
+            put("Implementation-Version", "1")
+            put("Main-Class", "Main")
+        }
+    }
+
+    baseName = "ash"
+    archiveName = "$baseName.jar"
+    destinationDir = File("jar/")
+}

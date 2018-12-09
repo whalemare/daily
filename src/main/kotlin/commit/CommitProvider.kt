@@ -19,6 +19,10 @@ class CommitProvider(
         val lines = rawText.split("\n")
         val commits = mutableListOf<Commit>()
 
+        if (lines.isEmpty() || lines.size == 1) {
+            return emptyList()
+        }
+
         var index = 0
         while (index < lines.size) {
             val line = lines[index]
