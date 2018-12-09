@@ -1,6 +1,6 @@
 
-import commit.CommitProvider
-import commit.RawCommitProvider
+import ru.whalemare.commit.CommitProvider
+import ru.whalemare.commit.RawCommitProvider
 import org.junit.jupiter.api.Test
 
 /**

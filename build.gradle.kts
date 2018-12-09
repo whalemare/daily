@@ -83,3 +83,10 @@ shadowJar.apply {
     archiveName = "$baseName.jar"
     destinationDir = File("jar/")
 }
+
+tasks.getByName("shadowJar").finalizedBy("copyToMg")
+
+tasks.create<Copy>("copyToMg") {
+    from("jar/")
+    into("/Users/whalemare/AndroidStudioProjects/mygenetics/")
+}

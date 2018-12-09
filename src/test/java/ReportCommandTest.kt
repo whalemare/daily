@@ -1,4 +1,4 @@
-import command.ReportCommand
+import ru.whalemare.command.ReportCommand
 import org.junit.jupiter.api.Test
 
 /**
