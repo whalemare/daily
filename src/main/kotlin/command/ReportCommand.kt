@@ -31,6 +31,12 @@ class ReportCommand : Runnable {
         "[-]" to "disable"
     )
 
+    private val postfixes = mapOf(
+        "[+]" to "Добавлены небольшие улучшения, делающие жизнь пользователей и разработчика приятнее",
+        "[-]" to "Убраны небольшие неточности, которые являлись излишними",
+        "[*]" to "Сделаны небольшие изменения, ради всеобщего блага"
+    )
+
     private val provider = CommitProvider(RawCommitProvider())
 
     override fun run() {
@@ -41,16 +47,21 @@ class ReportCommand : Runnable {
         }
 
         val messages = mutableListOf<String>()
-        commits.filter { commit ->
-            commit.body.isNotBlank() // ignore commits with empty body
-        }.forEach { commit ->
+        val minorChanges = mutableSetOf<String>()
+        commits.forEach { commit ->
             val prefix = findPrefix(commit)
 
-            val bodies = commit.body.split("\n")
-            bodies.forEach { body ->
-                messages.add("$prefix $body")
+            if (commit.body.isBlank()) {
+                minorChanges.add("$prefix ${postfixes[prefix]!!}")
+            } else {
+                val bodies = commit.body.split("\n")
+                bodies.forEach { body ->
+                    messages.add("$prefix $body")
+                }
             }
         }
+
+        minorChanges.forEach { messages.add(it) }
 
         val message = messages.joinToString("\n")
         clipboard(message)
