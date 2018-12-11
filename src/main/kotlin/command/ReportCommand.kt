@@ -18,10 +18,11 @@ import java.text.SimpleDateFormat
 )
 class ReportCommand : Runnable {
 
-    private val provider = CommitProvider(RawCommitProvider())
+    @CommandLine.Option(names = ["--path", "-p"])
+    private var path: String = ""
 
     override fun run() {
-        val commits = provider.provide()
+        val commits = CommitProvider(RawCommitProvider(path = path)).provide()
         val formatter = CommitFormatter(commits)
         val message = formatter.format()
 

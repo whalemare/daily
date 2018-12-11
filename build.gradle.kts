@@ -88,5 +88,5 @@ tasks.getByName("shadowJar").finalizedBy("copyToMg")
 
 tasks.create<Copy>("copyToMg") {
     from("jar/")
-    into("/Users/whalemare/AndroidStudioProjects/mygenetics/")
+    into("/Users/whalemare/Applications/")
 }
