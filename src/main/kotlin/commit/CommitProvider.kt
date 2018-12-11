@@ -62,7 +62,7 @@ class CommitProvider(
 
     private fun startBody(lines: List<String>): Triple<String, String, String> {
         val HEADER = 0
-        val HEADER_BODY = 1
+        val HEADER_FOOTER = 1
         val HEADER_BODY_FOOTER = 2
 
         val countWhitespaces = lines.count { it.isBlank() }
@@ -74,16 +74,14 @@ class CommitProvider(
             HEADER -> {
                 header = extractHeader(lines)
             }
-            HEADER_BODY -> {
+            HEADER_FOOTER -> {
                 header = extractHeader(lines)
-                body = extractBody(lines)
+                footer = extractBody(lines)
             }
             HEADER_BODY_FOOTER -> {
                 header = extractHeader(lines)
                 body = extractBody(lines)
-
-                val indexFooter = lines.indexOfLast { it.isBlank() }
-                footer = lines.subList(indexFooter, lines.size).joinToString("\n") { it.trim() }
+                footer = extractFooter(lines)
             }
         }
         return Triple(
@@ -109,5 +107,10 @@ class CommitProvider(
             .filter { it.isNotBlank() }
             .map { it.trim() }
             .joinToString(separator = "\n")
+    }
+
+    private fun extractFooter(lines: List<String>): String {
+        val indexFooter = lines.indexOfLast { it.isBlank() }
+        return lines.subList(indexFooter, lines.size).joinToString("\n") { it.trim() }
     }
 }
