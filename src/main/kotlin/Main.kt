@@ -1,3 +1,4 @@
+import command.ReleaseCommand
 import command.ReportCommand
 import picocli.CommandLine
 
@@ -7,7 +8,7 @@ import picocli.CommandLine
  */
 @CommandLine.Command(
     name = "ash", aliases = ["ashe"],
-    subcommands = [ReportCommand::class]
+    subcommands = [ReportCommand::class, ReleaseCommand::class]
 )
 class Main : Runnable {
     override fun run() {
