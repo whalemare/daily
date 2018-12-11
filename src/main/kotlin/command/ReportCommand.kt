@@ -21,8 +21,14 @@ class ReportCommand : Runnable {
     @CommandLine.Option(names = ["--path", "-p"])
     private var path: String = ""
 
+    @CommandLine.Option(names = ["--relative", "-r"])
+    private var relative: Boolean = false
+
     override fun run() {
-        val commits = CommitProvider(RawCommitProvider(path = path)).provide()
+        val commits = CommitProvider(RawCommitProvider(
+            path = path,
+            all = !relative
+        )).provide()
         val formatter = CommitFormatter(commits)
         val message = formatter.format()
 

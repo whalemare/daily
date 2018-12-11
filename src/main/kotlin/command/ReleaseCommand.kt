@@ -16,10 +16,18 @@ import java.text.SimpleDateFormat
 @CommandLine.Command(name = "release")
 class ReleaseCommand : Runnable {
 
-    private val commitProvider = CommitProvider(RawCommitProvider(Since.LatestTag))
+    @CommandLine.Option(names = ["--path", "-p"])
+    private var path: String = ""
+
+    @CommandLine.Option(names = ["--relative", "-r"])
+    private var relative: Boolean = false
 
     override fun run() {
-        val commits = commitProvider.provide()
+        val commits = CommitProvider(RawCommitProvider(
+            since = Since.LatestTag,
+            path = path,
+            all = !relative
+        )).provide()
         val message = CommitFormatter(commits).format()
 
         if (commits.isNotEmpty()) {
