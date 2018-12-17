@@ -3,8 +3,11 @@ package command
 import commit.CommitFormatter
 import commit.CommitProvider
 import commit.RawCommitProvider
+import commit.Since
+import converter.SinceConverter
 import ext.clipboard
 import picocli.CommandLine
+import picocli.CommandLine.Option
 import java.text.SimpleDateFormat
 
 
@@ -18,17 +21,23 @@ import java.text.SimpleDateFormat
 )
 class ReportCommand : Runnable {
 
-    @CommandLine.Option(names = ["--path", "-p"])
+    @Option(names = ["--path", "-p"])
     private var path: String = ""
 
-    @CommandLine.Option(names = ["--relative", "-r"])
+    @Option(names = ["--relative", "-r"])
     private var relative: Boolean = false
 
+    @Option(names = ["--since", "-s", "-d"])
+    private var sinceRaw: String = ""
+
     override fun run() {
-        val commits = CommitProvider(RawCommitProvider(
-            path = path,
-            all = !relative
-        )).provide()
+        val commits = CommitProvider(
+            RawCommitProvider(
+                path = path,
+                all = !relative,
+                since = SinceConverter(Since.Raw("6am")).convert(sinceRaw)
+            )
+        ).provide()
         val formatter = CommitFormatter(commits)
         val message = formatter.format()
 

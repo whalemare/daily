@@ -4,9 +4,11 @@ import commit.CommitFormatter
 import commit.CommitProvider
 import commit.RawCommitProvider
 import commit.Since
+import converter.SinceConverter
 import ext.clipboard
 import ext.execute
 import picocli.CommandLine
+import picocli.CommandLine.Option
 import java.text.SimpleDateFormat
 
 /**
@@ -16,15 +18,18 @@ import java.text.SimpleDateFormat
 @CommandLine.Command(name = "release")
 class ReleaseCommand : Runnable {
 
-    @CommandLine.Option(names = ["--path", "-p"])
+    @Option(names = ["--path", "-p"])
     private var path: String = ""
 
-    @CommandLine.Option(names = ["--relative", "-r"])
+    @Option(names = ["--relative", "-r"])
     private var relative: Boolean = false
+
+    @Option(names = ["--since", "-s", "-d"])
+    private var sinceRaw: String = ""
 
     override fun run() {
         val commits = CommitProvider(RawCommitProvider(
-            since = Since.LatestTag,
+            since = SinceConverter(Since.LatestTag).convert(sinceRaw),
             path = path,
             all = !relative
         )).provide()

@@ -5,8 +5,6 @@ import java.awt.datatransfer.StringSelection
 import java.io.BufferedReader
 import java.io.InputStreamReader
 
-
-
 /**
  * @since 2018
  * @author Anton Vlasov - whalemare
