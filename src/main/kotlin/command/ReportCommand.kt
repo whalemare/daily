@@ -1,8 +1,8 @@
 package command
 
 import commit.CommitFormatter
-import commit.CommitProvider
 import commit.RawCommitProvider
+import commit.RusCommitProvider
 import commit.Since
 import converter.SinceConverter
 import ext.clipboard
@@ -31,7 +31,7 @@ class ReportCommand : Runnable {
     private var sinceRaw: String = ""
 
     override fun run() {
-        val commits = CommitProvider(
+        val commits = RusCommitProvider(
             RawCommitProvider(
                 path = path,
                 all = !relative,
