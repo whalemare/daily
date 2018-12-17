@@ -7,7 +7,7 @@ import Provider
  * @since 2018
  * @author Anton Vlasov - whalemare
  */
-class CommitProvider(
+open class CommitProvider(
     private val rawProvider: Provider<String>
 ) : Provider<List<Commit>> {
 
@@ -60,7 +60,7 @@ class CommitProvider(
         return commits.sortedBy { it.date }
     }
 
-    private fun startBody(lines: List<String>): Triple<String, String, String> {
+    open fun startBody(lines: List<String>): Triple<String, String, String> {
         val HEADER = 0
         val HEADER_FOOTER = 1
         val HEADER_BODY_FOOTER = 2
